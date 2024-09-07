@@ -17,9 +17,11 @@ import { StoreService } from "../stores/store.service";
 import { Store } from "../stores/entities/store.entity";
 import { MainCategoryService } from "../categories/main-category.service";
 import { MainCategory } from "../categories/entities/main-category.entity";
+import { ConfigModule } from "@nestjs/config";
 
 @Module({
     imports: [
+        ConfigModule.forRoot(),
         TypeOrmModule.forFeature([User, Otp, Store, MainCategory]),
         UsersModule,
         PassportModule,
