@@ -24,7 +24,7 @@ import { MainCategory } from "../categories/entities/main-category.entity";
         UsersModule,
         PassportModule,
         JwtModule.register({
-            secret: SECRET_KEY,
+            secret: process.env.SECRET_KEY,
             signOptions: { expiresIn: '1d' }
         }),
         StoreModule

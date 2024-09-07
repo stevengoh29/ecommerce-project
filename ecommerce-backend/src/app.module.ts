@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { DATABASE_CONFIG } from './config/database.config';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import databaseConfig, { DATABASE_CONFIG } from './config/database.config';
 import { LoggingMiddleware } from './middleware/logging.middleware';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoryModule } from './modules/categories/category.module';
@@ -15,10 +15,34 @@ import { extname } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { IMAGE_SERVE_DIR } from './config/application.config';
 import { CouponModule } from './modules/coupons/coupon.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import configuration from './config/database.config'
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot(DATABASE_CONFIG),
+    ConfigModule.forRoot({
+      load: [configuration],
+      isGlobal: true,
+      cache: true,
+    }),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService): Promise<TypeOrmModuleOptions> => {
+        const dbConfig = configService.get('database');
+        return {
+          type: dbConfig.type,
+          host: dbConfig.host,
+          port: dbConfig.port,
+          username: dbConfig.username,
+          password: dbConfig.password,
+          database: dbConfig.database,
+          autoLoadEntities: dbConfig.autoLoadEntities,
+          synchronize: dbConfig.synchronize,
+        };
+      },
+    }),
+
     ServeStaticModule.forRoot({
       rootPath: '/app/uploads',
       serveRoot: IMAGE_SERVE_DIR

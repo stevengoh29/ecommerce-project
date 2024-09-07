@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { extractAllErrors } from './utils/validation.util';
+import { config } from 'dotenv';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -35,4 +36,5 @@ async function bootstrap() {
 
   await app.listen(4000);
 }
+config();
 bootstrap();
