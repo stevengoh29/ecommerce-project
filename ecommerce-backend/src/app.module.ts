@@ -30,6 +30,7 @@ import configuration from './config/database.config'
       inject: [ConfigService],
       useFactory: async (configService: ConfigService): Promise<TypeOrmModuleOptions> => {
         const dbConfig = configService.get('database');
+        console.log(dbConfig)
         return {
           type: dbConfig.type,
           host: dbConfig.host,
