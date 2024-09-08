@@ -15,6 +15,7 @@ export type TableColumnProps = {
     label: string
     width?: string,
     type?: TableColumnType
+    onCellClicked?: (data: any) => void
 }
 
 type TableProps = {
@@ -69,7 +70,7 @@ const Table = (props: TableProps) => {
             return <img src={URL_API_ENDPOINT + firstImage[0]} alt="No Image" className="rounded-full w-9 h-9 m-auto" />
         }
         if (column.type == 'IMAGE') return value == '-' ? <IoImage className="w-9 h-9 text-slate-400" /> : <img src={URL_API_ENDPOINT + value} alt="No Image" className="rounded-full w-9 h-9 m-auto" />
-        if (column.type == 'LINK') return <label className="text-blue-500 hover:text-blue-700 cursor-pointer duration-300 font-bold" onClick={() => alert('oke')}>{value}</label>
+        if (column.type == 'LINK') return <label className="text-blue-500 hover:text-blue-700 cursor-pointer duration-300 font-bold" onClick={() => column.onCellClicked ? column.onCellClicked(dataRow) : null}>{value}</label>
         if (column.type == 'BOOL') return value == true ? 'Yes' : 'No'
         return value
     }

@@ -82,7 +82,7 @@ const MainCategoryListing = () => {
                             paginationMetadata={data.meta}
                             onPaginationChanged={(pageNumber) => handlePaginationChanged(pageNumber)}
                             actionColumns={role === 'ADMIN' ? [
-                                { element: <TableActionButton type="VIEW" />, onClick: (mainCategory: MainCategoryData) => { alert('View' + JSON.stringify(mainCategory)) } },
+                                { element: <TableActionButton type="VIEW" />, onClick: (mainCategory: MainCategoryData) => { push(`/admin/main-categories/${mainCategory.uuid}`) } },
                                 { element: <TableActionButton type="EDIT" />, onClick: (mainCategory: MainCategoryData) => { push(`/admin/main-categories/${mainCategory.uuid}/edit`) } },
                                 { element: <TableActionButton type="DELETE" />, onClick: (mainCategory: MainCategoryData) => { handleDelete(mainCategory) } }
                             ] : []}

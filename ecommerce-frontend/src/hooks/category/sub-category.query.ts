@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 
 type QueryParams = {
     page: string
+    mainCategoryUuid: string
 }
 
 export const useGetSubCategories = (params?: QueryParams) => {
