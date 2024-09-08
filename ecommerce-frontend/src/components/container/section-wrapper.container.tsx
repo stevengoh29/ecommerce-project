@@ -7,10 +7,11 @@ type Props = {
     children: React.ReactNode
     className?: string
     canGoBack?: boolean
+    title?: string
 }
 
 const SectionContainer = (props: Props) => {
-    const { children, canGoBack = false, className } = props
+    const { children, canGoBack = false, className, title } = props
     const router = useRouter()
 
     return (
@@ -24,6 +25,7 @@ const SectionContainer = (props: Props) => {
                 </div>
             }
             <div className={classNames(`py-3 px-5 rounded-lg w-full shadow-main mb-3`, className)}>
+                {title && <h1 className="font-bold text-lg mb-3">{title}</h1>}
                 {children}
             </div>
         </>
