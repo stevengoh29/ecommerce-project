@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnprocessableEntityException } from "@ne
 import { InjectRepository } from "@nestjs/typeorm";
 import { ProductVariant } from "../entities/product-variant.entity";
 import { FindOptionsOrder, FindOptionsWhere, Repository } from "typeorm";
-import { CreateProductVariantDto } from "../dto/create-product.dto";
+import { CreateProductVariantDto, SaveProductVariantDto } from "../dto/create-product.dto";
 import { plainToInstance } from "class-transformer";
 import { ProductService } from "./product.service";
 import { SaveProductDisplayDto } from "../dto/create-product-display.dto";
@@ -61,7 +61,7 @@ export class ProductVariantService {
         return plainToInstance(ProductVariant, newVariant)
     }
 
-    async update(productUuid: string, productVariantUuid: string, editVariantDto: SaveProductDisplayDto) {
+    async update(productUuid: string, productVariantUuid: string, editVariantDto: SaveProductVariantDto) {
         const productVariant = await this.getById(productUuid, productVariantUuid)
         if (!productVariant) throw new NotFoundException('Product Variant is not found')
 

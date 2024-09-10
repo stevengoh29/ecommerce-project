@@ -3,6 +3,7 @@ import Button from "../button/button"
 
 export type CustomOption = {
     title?: string
+    containerClassName?: string
     renderItem: (args?: any) => ReactNode
 }
 

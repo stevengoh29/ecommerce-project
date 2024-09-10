@@ -79,6 +79,8 @@ export class ProductService {
         const store = await this.storeService.getStoreByUuid(productInput.store)
         if (!store) throw new NotFoundException('Store not found')
 
+        // TODO : PRODUCT DISPLAYS FOR PRODUCT ADD.
+
         await this.dataSource.transaction(async entityManager => {
             // Create Product 
             const newProduct = entityManager.create(Product, {

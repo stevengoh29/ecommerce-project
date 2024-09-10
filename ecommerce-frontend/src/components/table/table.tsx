@@ -22,6 +22,10 @@ type TableProps = {
     columns: TableColumnProps[],
     data: any[]
     enablePagination?: boolean
+    canSelect?: boolean
+    canSelectMultiple?: boolean
+    onRowsSelected?: (data: any) => void
+    defaultSelectedRows?: any[]
     onPaginationChanged?: (number: number) => void
     paginationMetadata?: Metadata
     actionColumns?: {
@@ -36,12 +40,7 @@ export type ColumnSort = {
 }
 
 const Table = (props: TableProps) => {
-    const { columns, data, enablePagination = false, paginationMetadata, onPaginationChanged, actionColumns = [] } = props
-
-    const [sort, setSort] = useState<undefined | ColumnSort>()
-
-    const onColumnClick = useCallback((column: string, direction: FILTER_DIRECTION | undefined) =>
-        direction == undefined ? setSort(undefined) : setSort({ columnName: column, direction }), [sort])
+    const { columns, data, enablePagination = false, paginationMetadata, onPaginationChanged, actionColumns = [], onRowsSelected, defaultSelectedRows } = props
 
     const pagination: PaginationType = {
         currentPage: Number.parseInt(paginationMetadata?.currentPage ?? "1"),
@@ -51,7 +50,32 @@ const Table = (props: TableProps) => {
         siblings: 1
     }
 
+    const [sort, setSort] = useState<undefined | ColumnSort>()
+    const [selectedRows, setSelectedRows] = useState<any[]>(defaultSelectedRows ?? []);
+
     const paginationData = usePagination(pagination)
+
+    const onColumnClick = useCallback((column: string, direction: FILTER_DIRECTION | undefined) =>
+        direction == undefined ? setSort(undefined) : setSort({ columnName: column, direction }), [sort])
+
+    const handleRowClick = (rowData: any) => {
+        setSelectedRows((prevSelectedRows) => {
+            const isSelected = prevSelectedRows.some(selectedRow => isEqual(selectedRow, rowData));
+            const newSelectedRows = isSelected
+                ? prevSelectedRows.filter(selectedRow => !isEqual(selectedRow, rowData))
+                : [...prevSelectedRows, rowData];
+
+            if (onRowsSelected) {
+                onRowsSelected(newSelectedRows);
+            }
+
+            return newSelectedRows;
+        });
+    };
+
+    const isEqual = (rowA: any, rowB: any) => {
+        return rowA.uuid === rowB.uuid;
+    };
 
     const handleOnPageChanged = (number: number) => {
         paginationData?.setPage(number)
@@ -80,53 +104,57 @@ const Table = (props: TableProps) => {
             <table className="min-w-full bg-white border border-gray-200 border-collapse">
                 <thead>
                     <tr>
-                        {columns.map((column, index) => {
-                            return (
-                                <TableHeadCell
-                                    key={index}
-                                    columnName={column.label}
-                                    value={sort}
-                                    onColumnClick={(direction) => onColumnClick(column.label, direction)}
-                                    width={column.width}
-                                />
-                            )
-                        })}
+                        {columns.map((column, index) => (
+                            <TableHeadCell
+                                key={index}
+                                columnName={column.label}
+                                value={sort}
+                                onColumnClick={(direction) => onColumnClick(column.label, direction)}
+                                width={column.width}
+                            />
+                        ))}
                         {actionColumns.length > 0 && <TableHeadCell columnName={'Action'} />}
                     </tr>
                 </thead>
                 <tbody>
-                    {data.map((data, index) => {
-                        return (
-                            <tr key={index}>
-                                {columns.map((column, index) => (
-                                    <TableCell key={index} className={`${column.width ?? 'w-64'}`}>
-                                        <div className={`truncate ${column.width ?? 'w-64'}`}>
-                                            {getCellValue(column, data)}
-                                        </div>
-                                    </TableCell>
-                                ))}
-                                {actionColumns.length > 0 && (
-                                    <TableCell className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 truncate">
-                                        <div className='flex gap-3'>
-                                            {actionColumns.map((action, index) => (
-                                                <div key={index} onClick={() => action.onClick(data, index)}>{action.element}</div>
-                                            ))}
-                                        </div>
-                                    </TableCell>
-                                )}
-                            </tr>
-                        )
-                    })}
+                    {data.map((rowData, rowIndex) => (
+                        <tr
+                            key={rowIndex}
+                            onClick={() => handleRowClick(rowData)}
+                            className={`cursor-pointer ${selectedRows.some(selectedRow => isEqual(selectedRow, rowData)) ? 'bg-gray-100' : ''}`}
+                        >
+                            {columns.map((column, colIndex) => (
+                                <TableCell key={colIndex} className={`${column.width ?? 'w-64'}`}>
+                                    <div className={`truncate ${column.width ?? 'w-64'}`}>
+                                        {getCellValue(column, rowData)}
+                                    </div>
+                                </TableCell>
+                            ))}
+                            {actionColumns.length > 0 && (
+                                <TableCell className="px-4 py-2 border-b border-gray-200 text-sm text-gray-700 truncate">
+                                    <div className='flex gap-3'>
+                                        {actionColumns.map((action, actionIndex) => (
+                                            <div key={actionIndex} onClick={() => action.onClick(rowData, actionIndex)}>
+                                                {action.element}
+                                            </div>
+                                        ))}
+                                    </div>
+                                </TableCell>
+                            )}
+                        </tr>
+                    ))}
                 </tbody>
             </table>
-            {enablePagination &&
+            {enablePagination && (
                 <nav className="flex items-center flex-column flex-wrap md:flex-row justify-between" aria-label="Table navigation">
-                    <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">Showing <span className="font-semibold text-gray-900">
-                        {paginationData.activePage.itemRangeStart} - {paginationData.activePage.itemRangeEnd}
-                    </span> of <span className="font-semibold text-gray-900">{pagination.itemTotalCount}</span></span>
+                    <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+                        Showing <span className="font-semibold text-gray-900">
+                            {paginationData.activePage.itemRangeStart} - {paginationData.activePage.itemRangeEnd}
+                        </span> of <span className="font-semibold text-gray-900">{pagination.itemTotalCount}</span>
+                    </span>
                     <TablePaginate currentPage={paginationData.activePage.pageValue} onPageChanged={(number) => handleOnPageChanged(number)} paginationRange={paginationData.activePage.paginationRange} />
                 </nav>
-            }
+            )}
         </div>
     )
 }

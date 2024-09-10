@@ -1,3 +1,4 @@
+import { Option } from "@/components/input/dropdown-input"
 import { ApiResult } from "@/core/types/api-result.type"
 import productDisplayService, { ProductDisplayData, SearchProductDisplayParams } from "@/services/products/product-display.service"
 import { useQuery } from "@tanstack/react-query"
@@ -24,6 +25,27 @@ export const useGetProductDisplayById = (uuid: string) => {
 
     const query = useQuery<ProductDisplayData>({
         queryKey: ['get-product-display-by-id'],
+        queryFn: () => exec()
+    })
+
+    return query
+}
+
+export const useGetProductDisplayOptionByStoreUuid = (uuid: string) => {
+    const exec = async () => {
+        const params: SearchProductDisplayParams = {
+            page: 1,
+            size: 999,
+            store: uuid
+        }
+
+        const result = await productDisplayService.getAll(params)
+        const options = result.data.map((productDisplay) => ({ label: productDisplay.name, value: productDisplay.uuid }))
+        return options
+    }
+
+    const query = useQuery<Option[]>({
+        queryKey: ['get-product-display-options-by-store-uuid'],
         queryFn: () => exec()
     })
 

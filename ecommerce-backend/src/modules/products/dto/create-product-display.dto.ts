@@ -9,6 +9,10 @@ export class SaveProductDisplayDto {
     @IsOptional()
     description: string
 
+    @IsArray()
+    @IsOptional()
+    products: string[]
+
     // @IsString()
     // @IsOptional()
     // image: string

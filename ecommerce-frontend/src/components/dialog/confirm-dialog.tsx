@@ -22,7 +22,7 @@ const ConfirmDialog = (props: Props) => {
     }
 
     return (
-        <>
+        <div className="bg-white rounded-lg shadow-lg w-full p-6 overflow-scroll max-h-screen">
             <div className="flex justify-between items-center">
                 <h3 className="text-xl font-bold">{title}</h3>
             </div>
@@ -31,7 +31,7 @@ const ConfirmDialog = (props: Props) => {
                 <Button label={cancelLabel} variant='danger' onClick={onCancel ?? onClose} />
                 <Button label={confirmLabel} onClick={onConfirmButtonClick} />
             </div>
-        </>
+        </div>
 
     )
 }

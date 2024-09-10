@@ -1,12 +1,13 @@
 import { API_PATH } from "@/core/api/api-listing"
 import ApiService from "@/core/api/api.service"
 import { ApiResult } from "@/core/types/api-result.type"
+import { ProductData } from "./product.service"
 
 export type SearchProductDisplayParams = {
-    page: string
-    size: string
-    store: string
-    name: string
+    page: number
+    size: number
+    store?: string
+    name?: string
 }
 
 export type ProductDisplayData = {
@@ -15,6 +16,7 @@ export type ProductDisplayData = {
     description: string
     store: string
     isInactive: boolean
+    products: ProductData[]
 }
 
 export type SaveProductDisplayPayload = {
@@ -22,6 +24,7 @@ export type SaveProductDisplayPayload = {
     description: string
     store: string
     isInactive?: boolean
+    products: ProductData[] | string[]
 }
 
 export type UpdateProductDisplayPayload = Omit<SaveProductDisplayPayload, 'store'>

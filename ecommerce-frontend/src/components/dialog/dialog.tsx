@@ -2,6 +2,7 @@ import { Ref, forwardRef, useImperativeHandle, useMemo, useState } from "react"
 import ConfirmDialog, { ConfirmationOption } from "./confirm-dialog"
 import { useClickOutside } from "@/hooks/common/use-click-outside.hook"
 import CustomDialog, { CustomOption } from "./custom-dialog"
+import classNames from "classnames"
 
 export type DialogHandler = {
     confirm: (option: ConfirmationOption) => void
@@ -47,7 +48,7 @@ const Dialog = (props: any, ref: Ref<DialogHandler>) => {
 
     return (
         <div className={`fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 ${state ? 'visible' : 'hidden'}`}>
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-lg p-6 overflow-scroll max-h-screen" ref={dialogRef}>
+            <div className={classNames((state?.option as CustomOption)?.containerClassName, `bg-white rounded-lg shadow-lg w-full max-w-lg p-6 overflow-scroll max-h-screen`)} ref={dialogRef}>
                 {dialogContent}
             </div>
         </div>
