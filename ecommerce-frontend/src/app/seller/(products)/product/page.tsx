@@ -50,9 +50,9 @@ const ProductListingPage = () => {
                             paginationMetadata={data.meta}
                             onPaginationChanged={(pageNumber) => handlePaginationChanged(pageNumber)}
                             actionColumns={[
-                                { element: <TableActionButton type="VIEW" />, onClick: (product: ProductData) => { alert('View' + JSON.stringify(product)) } },
+                                { element: <TableActionButton type="VIEW" />, onClick: (product: ProductData) => { router.push(`/seller/product/${product.uuid}`) } },
                                 { element: <TableActionButton type="EDIT" />, onClick: (product: ProductData) => { router.push(`/seller/product/${product.uuid}/edit`) } },
-                                { element: <TableActionButton type="DELETE" />, onClick: (product: ProductData) => {  } }
+                                { element: <TableActionButton type="DELETE" />, onClick: (product: ProductData) => { } }
                             ]}
                         />
                     )

@@ -129,21 +129,21 @@ const AddProductPage = () => {
 
     const onSubmit = async (data: FormValues) => {
         try {
-            console.log(data)
-            // const imagePath = await uploadService.uploadMultipleFile(data.image)
-            // const payload: CreateProductPayload = {
-            //     name: data.name,
-            //     description: data.description,
-            //     imageUrl: JSON.stringify(imagePath),
-            //     store: storeId ?? '',
-            //     subcategoryUuid: data.subcategoryUuid,
-            //     productVariants: data.productVariants,
-            //     additionalItems: data.additionalItems
-            // }
+            const imagePath = await uploadService.uploadMultipleFile(data.image)
+            const payload: CreateProductPayload = {
+                name: data.name,
+                description: data.description,
+                imageUrl: JSON.stringify(imagePath),
+                store: storeId ?? '',
+                subcategoryUuid: data.subcategoryUuid,
+                productVariants: data.productVariants,
+                additionalItems: data.additionalItems,
+                productDisplay: data.productDisplay
+            }
 
-            // await create(payload)
-            // toast.success('Product has been saved successfully.')
-            // router.back()
+            await create(payload)
+            toast.success('Product has been saved successfully.')
+            router.back()
         } catch (error: any) {
             console.error(error)
             toast.error(error.toString())

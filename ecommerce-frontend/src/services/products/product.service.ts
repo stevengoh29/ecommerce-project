@@ -37,6 +37,7 @@ export type CreateProductPayload = {
     imageUrl: string
     productVariants: CreateProductVariantPayload[]
     additionalItems: CreateAdditionalItemPayload[]
+    productDisplay: string[]
     store: string
 }
 
