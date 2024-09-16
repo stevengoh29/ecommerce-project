@@ -16,6 +16,7 @@ export class ProductDisplay extends BaseEntity {
     isInactive: boolean
 
     @ManyToMany(() => Product, (product) => product.id)
+    @JoinColumn()
     @JoinTable({ name: 'product_display_products' })
     products: Product[]
 

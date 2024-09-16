@@ -1,6 +1,6 @@
 import { BaseEntity } from "src/common/entity/base.entity";
 import { SubCategory } from "src/modules/categories/entities/sub-category.entity";
-import { Column, Entity, ManyToMany, ManyToOne, OneToMany } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany } from "typeorm";
 import { ProductVariant } from "./product-variant.entity";
 import { ProductAdditionalItem } from "./product-additional-item.entity";
 import { Store } from "src/modules/stores/entities/store.entity";
@@ -29,15 +29,16 @@ export class Product extends BaseEntity {
     @ManyToOne(() => SubCategory, (subCategory) => subCategory.id)
     subCategory: SubCategory
 
-    @OneToMany(() => ProductVariant, (productVariant) => productVariant.id)
+    @OneToMany(() => ProductVariant, (productVariant) => productVariant.product)
     productVariant: ProductVariant[]
 
-    @OneToMany(() => ProductAdditionalItem, (additionalItem) => additionalItem.id)
+    @OneToMany(() => ProductAdditionalItem, (additionalItem) => additionalItem.product)
     productAdditionalItem: ProductAdditionalItem[]
 
     @ManyToOne(() => Store, (store) => store.id)
     store: Store
 
     @ManyToMany(() => ProductDisplay, productDisplay => productDisplay.products)
+    @JoinTable({name: 'product_display_products'})
     productDisplays: ProductDisplay[];
 }

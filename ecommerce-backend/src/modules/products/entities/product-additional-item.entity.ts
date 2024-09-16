@@ -16,6 +16,6 @@ export class ProductAdditionalItem extends BaseEntity {
     @Column({ type: 'boolean', default: false })
     isInactive: boolean
 
-    @ManyToOne(() => Product, (product) => product.id)
+    @ManyToOne(() => Product, (product) => product.productAdditionalItem)
     product: Product
 }

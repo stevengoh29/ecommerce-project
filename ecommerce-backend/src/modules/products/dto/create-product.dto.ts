@@ -24,6 +24,10 @@ export class SaveProductDto {
     @IsArray()
     @IsOptional()
     additionalItems: CreateAdditionalItemDto[]
+
+    @IsArray()
+    @IsOptional()
+    productDisplay: string[]
 }
 
 export class CreateProductDto extends SaveProductDto {

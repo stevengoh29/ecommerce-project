@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { StoreService } from "src/modules/stores/store.service";
-import { FindOptionsOrder, FindOptionsWhere, Like, Repository } from "typeorm";
+import { FindOptionsOrder, FindOptionsWhere, In, Like, Repository } from "typeorm";
 import { AssignProductToDisplayDto, CreateProductDisplayDto, SaveProductDisplayDto } from "../dto/create-product-display.dto";
 import { ProductDisplay } from "../entities/product-display.entity";
 import { ProductService } from "./product.service";
@@ -14,6 +14,7 @@ export class ProductDisplayService {
         @InjectRepository(ProductDisplay)
         private readonly productDisplayRepository: Repository<ProductDisplay>,
         private readonly storeService: StoreService,
+        @Inject(forwardRef(() => ProductService))
         private readonly productService: ProductService,
     ) { }
 
@@ -51,6 +52,20 @@ export class ProductDisplayService {
 
     async getById(uuid: string) {
         const productDisplay = await this.productDisplayRepository.findOne({ where: { uuid }, relations: ['products'] })
+        return productDisplay
+    }
+
+    async getByUuids(uuids: string[]) {
+        const filter: FindOptionsWhere<ProductDisplay> = {
+            uuid: In(uuids),
+            isDeleted: false
+        }
+
+        const [productDisplay, count] = await this.productDisplayRepository.findAndCount({
+            where: filter
+        })
+
+        if (count != uuids.length) throw new NotFoundException('Some product display are not found')
         return productDisplay
     }
 

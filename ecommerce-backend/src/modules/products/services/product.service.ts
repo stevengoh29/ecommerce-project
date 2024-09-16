@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
+import { forwardRef, Inject, Injectable, NotFoundException, UnprocessableEntityException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { SubCategoryService } from "src/modules/categories/sub-category.service";
 import { DataSource, FindOptionsOrder, FindOptionsWhere, In, Like, Not, Repository } from "typeorm";
@@ -9,15 +9,18 @@ import { ProductVariant } from "../entities/product-variant.entity";
 import { Product } from "../entities/product.entity";
 import { StoreService } from "src/modules/stores/store.service";
 import paginateUtil from "src/utils/paginate.util";
+import { ProductDisplayService } from "./product-display.service";
 
 @Injectable()
 export class ProductService {
     constructor(
         private readonly subcategoryService: SubCategoryService,
         private readonly storeService: StoreService,
+        @Inject(forwardRef(() => ProductDisplayService))
+        private readonly productDisplayService: ProductDisplayService,
+        private readonly dataSource: DataSource,
         @InjectRepository(Product)
         private readonly productRepository: Repository<Product>,
-        private readonly dataSource: DataSource
     ) { }
 
     getProduct = async (query: SearchProductDto) => {
@@ -62,7 +65,10 @@ export class ProductService {
     }
 
     getProductByUuid = async (uuid: string) => {
-        return this.productRepository.findOneBy({ uuid })
+        return await this.productRepository.findOne({
+            where: { uuid },
+            relations: ['productVariant', 'productAdditionalItem', 'productDisplays']
+        })
     }
 
     getProductByUuids = async (uuids: string[]) => {
@@ -79,7 +85,8 @@ export class ProductService {
         const store = await this.storeService.getStoreByUuid(productInput.store)
         if (!store) throw new NotFoundException('Store not found')
 
-        // TODO : PRODUCT DISPLAYS FOR PRODUCT ADD.
+        const productDisplay = await this.productDisplayService.getByUuids(productInput.productDisplay)
+        if (!productDisplay) throw new NotFoundException('Some product display are not found')
 
         await this.dataSource.transaction(async entityManager => {
             // Create Product 
@@ -88,6 +95,7 @@ export class ProductService {
                 description: productInput.description,
                 imageUrl: productInput.imageUrl,
                 subCategory: subcategory,
+                productDisplays: productDisplay,
                 store
             })
 

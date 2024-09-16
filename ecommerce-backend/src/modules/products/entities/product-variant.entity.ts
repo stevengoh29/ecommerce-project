@@ -22,6 +22,6 @@ export class ProductVariant extends BaseEntity {
     @Column({ type: 'boolean', default: false })
     isInactive: boolean
 
-    @ManyToOne(() => Product, (product) => product.id)
+    @ManyToOne(() => Product, (product) => product.productVariant)
     product: Product
-}
+}   

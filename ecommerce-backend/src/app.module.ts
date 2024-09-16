@@ -36,7 +36,7 @@ import configuration from './config/database.config'
           host: 'localhost',
           port: dbConfig.port,
           username: 'root',
-          password: 'Mestika$123',
+          password: 'Admin123',
           database: 'ecommerce_dev',
           autoLoadEntities: dbConfig.autoLoadEntities,
           synchronize: dbConfig.synchronize,
