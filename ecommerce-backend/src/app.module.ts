@@ -33,11 +33,11 @@ import configuration from './config/database.config'
         console.log(dbConfig)
         return {
           type: dbConfig.type,
-          host: dbConfig.host,
+          host: 'localhost',
           port: dbConfig.port,
-          username: dbConfig.username,
-          password: dbConfig.password,
-          database: dbConfig.database,
+          username: 'root',
+          password: 'Mestika$123',
+          database: 'ecommerce_dev',
           autoLoadEntities: dbConfig.autoLoadEntities,
           synchronize: dbConfig.synchronize,
         };

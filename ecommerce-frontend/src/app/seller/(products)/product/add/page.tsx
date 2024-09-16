@@ -9,12 +9,15 @@ import AdditionalItemsDialog from "@/components/dialog/form-input/additional-ite
 import ProductVariantDialog from "@/components/dialog/form-input/product-variant-dialog"
 import FormDropdownInput from "@/components/input/form/form-dropdown-input"
 import FormMultipleImageUpload from "@/components/input/form/form-multiple-image-upload"
+import FormMultiselectInput from "@/components/input/form/form-multiselect-input"
 import FormTextInput from "@/components/input/form/form-text-input"
 import Table from "@/components/table/table"
 import { useGetSubcategoriesOptionByStore } from "@/hooks/category/sub-category.query"
 import useDialog from "@/hooks/common/use-dialog.hook"
 import { useAppSelector } from "@/hooks/common/use-redux.hook"
+import { useGetProductDisplayOptionByStoreUuid } from "@/hooks/product-display/product-display.query"
 import { useCreateProduct } from "@/hooks/products/product.mutation"
+import { ProductDisplayData } from "@/services/products/product-display.service"
 import { CreateAdditionalItemPayload, CreateProductPayload, CreateProductVariantPayload } from "@/services/products/product.service"
 import uploadService from "@/services/uploads/upload.service"
 import { useRouter } from "next/navigation"
@@ -28,6 +31,7 @@ type FormValues = {
     image: File[]
     productVariants: CreateProductVariantPayload[]
     additionalItems: CreateAdditionalItemPayload[]
+    productDisplay: string[]
 }
 
 const PROD_VAR_COLUMN = [
@@ -53,18 +57,21 @@ const AddProductPage = () => {
             subcategoryUuid: '',
             image: [],
             productVariants: [],
-            additionalItems: []
+            additionalItems: [],
+            productDisplay: []
         }
     })
 
     const dialog = useDialog()
     const router = useRouter()
+
     const productVariants = watch('productVariants')
     const additionalItems = watch('additionalItems')
 
     const { storeId } = useAppSelector(root => root.users)
     const { data: subcategoryOptions } = useGetSubcategoriesOptionByStore(storeId ?? '')
     const { mutateAsync: create } = useCreateProduct()
+    const { data: productDisplayOptions } = useGetProductDisplayOptionByStoreUuid(storeId ?? '')
 
     const setProductVariantToForm = (productVariant: CreateProductVariantPayload, type: 'INSERT' | 'UPDATE', index?: number) => {
         if (type == 'INSERT') setValue('productVariants', [...productVariants, productVariant])
@@ -122,20 +129,21 @@ const AddProductPage = () => {
 
     const onSubmit = async (data: FormValues) => {
         try {
-            const imagePath = await uploadService.uploadMultipleFile(data.image)
-            const payload: CreateProductPayload = {
-                name: data.name,
-                description: data.description,
-                imageUrl: JSON.stringify(imagePath),
-                store: storeId ?? '',
-                subcategoryUuid: data.subcategoryUuid,
-                productVariants: data.productVariants,
-                additionalItems: data.additionalItems
-            }
+            console.log(data)
+            // const imagePath = await uploadService.uploadMultipleFile(data.image)
+            // const payload: CreateProductPayload = {
+            //     name: data.name,
+            //     description: data.description,
+            //     imageUrl: JSON.stringify(imagePath),
+            //     store: storeId ?? '',
+            //     subcategoryUuid: data.subcategoryUuid,
+            //     productVariants: data.productVariants,
+            //     additionalItems: data.additionalItems
+            // }
 
-            await create(payload)
-            toast.success('Product has been saved successfully.')
-            router.back()
+            // await create(payload)
+            // toast.success('Product has been saved successfully.')
+            // router.back()
         } catch (error: any) {
             console.error(error)
             toast.error(error.toString())
@@ -154,6 +162,12 @@ const AddProductPage = () => {
                             options={subcategoryOptions ?? []}
                             label="Subcategory"
                             name="subcategoryUuid"
+                            control={control}
+                        />
+                        <FormMultiselectInput
+                            options={productDisplayOptions ?? []}
+                            label="Product Display"
+                            name="productDisplay"
                             control={control}
                         />
                     </FlexBox>

@@ -36,7 +36,7 @@ export class ProductDisplayService {
             const store = await this.storeService.getStoreByUuid(query.store)
             filter.store = { id: store.id }
         }
-        
+
         if (query.includeInactive && query.includeInactive == 'true') filter.isInactive = undefined
 
         const result = await this.productDisplayRepository.findAndCount({
@@ -58,10 +58,13 @@ export class ProductDisplayService {
         const store = await this.storeService.getStoreByUuid(body.store)
         if (!store) throw new NotFoundException('Store is not found')
 
+        const products = await this.productService.getProductByUuids(body.products)
+
         const productDisplay = this.productDisplayRepository.create({
             name: body.name,
             description: body.description,
-            store
+            store,
+            products
         })
 
         const newProductDisplay = await this.productDisplayRepository.save(productDisplay)
@@ -90,10 +93,22 @@ export class ProductDisplayService {
     }
 
     async update(uuid: string, editDto: SaveProductDisplayDto) {
-        const productDisplay = await this.productDisplayRepository.findOneBy({ uuid })
+        const productDisplay = await this.productDisplayRepository.findOne({
+            where: { uuid },
+            relations: ['products']
+        })
+
         if (!productDisplay) throw new NotFoundException('Product display is not found.')
 
-        await this.productDisplayRepository.update(productDisplay.id, editDto)
+        const products = await this.productService.getProductByUuids(editDto.products)
+
+        const updatedProductDisplay = {
+            ...productDisplay,
+            ...editDto,
+            products,
+        };
+
+        await this.productDisplayRepository.save(updatedProductDisplay)
         return 'Update product display is success'
     }
 
