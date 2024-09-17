@@ -67,7 +67,7 @@ export class ProductService {
     getProductByUuid = async (uuid: string) => {
         return await this.productRepository.findOne({
             where: { uuid },
-            relations: ['productVariant', 'productAdditionalItem', 'productDisplays']
+            relations: ['productVariant', 'productAdditionalItem', 'productDisplays', 'subCategory']
         })
     }
 
