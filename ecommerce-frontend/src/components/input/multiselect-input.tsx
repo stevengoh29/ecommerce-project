@@ -23,11 +23,11 @@ const MultiselectInput = (props: DropdownProps) => {
     const { label, onSearchInputChanged, onSelectedChanged, options, value, enableSearch = false } = props
     const [showDropdown, setShowDropdown] = useState<boolean>(false)
     const [searchInput, setSearchInput] = useState<string | undefined>()
-    const [selectedOptions, setSelectedOptions] = useState<Option[]>([])
+    const [selectedOptions, setSelectedOptions] = useState<Option[]>(value ?? [])
 
     const dropdownRef = useClickOutside(() => setShowDropdown(false))
 
-    const onDropdownClick = useCallback(() => setShowDropdown(!showDropdown), [showDropdown])
+    const onDropdownClick = useCallback(() => { if (!props.field.disabled) setShowDropdown(!showDropdown) }, [showDropdown])
 
     const onOptionClicked = (option: Option) => {
         if (selectedOptions.includes(option)) {
@@ -67,14 +67,14 @@ const MultiselectInput = (props: DropdownProps) => {
                             className="flex items-center bg-slate-100 px-3 rounded-md"
                         >
                             <span>{option.label}</span>
-                            <IoClose
+                            {!props.field.disabled && <IoClose
                                 size={20}
                                 className="ml-1 cursor-pointer text-slate-400"
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     removeOption(option);
                                 }}
-                            />
+                            />}
                         </div>
                     ))}
                 </div>

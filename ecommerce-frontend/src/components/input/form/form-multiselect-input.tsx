@@ -16,6 +16,7 @@ const FormMultiselectInput = (props: Props) => {
     const { field } = useController(props)
     return (
         <MultiselectInput
+            field={field}
             label={props.label}
             options={props.options}
             value={props.options.filter(opt => field.value?.includes(opt.value))}

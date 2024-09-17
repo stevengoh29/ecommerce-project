@@ -7,6 +7,7 @@ import { IoImage } from "react-icons/io5"
 import TableCell from "./table-cell"
 import TableHeadCell from "./table-head-cell"
 import TablePaginate from "./table-paginate"
+import Image from "next/image"
 
 export type TableColumnType = 'TEXT' | 'IMAGE' | 'LINK' | 'BOOL' | 'IMAGES'
 
@@ -56,7 +57,7 @@ const Table = (props: TableProps) => {
     const paginationData = usePagination(pagination)
 
     const onColumnClick = useCallback((column: string, direction: FILTER_DIRECTION | undefined) =>
-        direction == undefined ? setSort(undefined) : setSort({ columnName: column, direction }), [sort])
+        direction == undefined ? setSort(undefined) : setSort({ columnName: column, direction }), [])
 
     const handleRowClick = (rowData: any) => {
         setSelectedRows((prevSelectedRows) => {
@@ -91,7 +92,7 @@ const Table = (props: TableProps) => {
             if (value == '-') return <IoImage className="w-9 h-9 text-slate-400" />
 
             const firstImage = JSON.parse(value) as string[]
-            return <img src={URL_API_ENDPOINT + firstImage[0]} alt="No Image" className="rounded-full w-9 h-9 m-auto" />
+            return <Image src={URL_API_ENDPOINT + firstImage[0]} alt="No Image" className="rounded-full w-9 h-9 m-auto" />
         }
         if (column.type == 'IMAGE') return value == '-' ? <IoImage className="w-9 h-9 text-slate-400" /> : <img src={URL_API_ENDPOINT + value} alt="No Image" className="rounded-full w-9 h-9 m-auto" />
         if (column.type == 'LINK') return <label className="text-blue-500 hover:text-blue-700 cursor-pointer duration-300 font-bold" onClick={() => column.onCellClicked ? column.onCellClicked(dataRow) : null}>{value}</label>

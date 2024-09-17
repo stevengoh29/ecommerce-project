@@ -1,5 +1,8 @@
 import { API_PATH } from "@/core/api/api-listing"
 import ApiService from "@/core/api/api.service"
+import { ApiResult } from "@/core/types/api-result.type"
+import { ProductDisplayData } from "./product-display.service"
+import { SubcategoryData } from "../categories/sub-category.service"
 
 export type SearchProductParams = {
     page?: number
@@ -15,10 +18,11 @@ export type ProductData = {
     uuid: string
     name: string
     description: string
-    subcategoryUuid: string
+    subCategory: string | SubcategoryData
     imageUrl: string
-    productVariants: ProductVariantData[]
-    additionalItems: AdditionalItemData[]
+    productVariant: ProductVariantData[]
+    productAdditionalItem: AdditionalItemData[]
+    productDisplays: ProductDisplayData[] | string[]
     store: string
 }
 
@@ -62,7 +66,7 @@ class ProductService {
         return response.data
     }
 
-    async getById(uuid: string) {
+    async getById(uuid: string): Promise<ApiResult<ProductData>> {
         const response = await ApiService.get(API_PATH.products.product.getById, {}, {}, { uuid })
         return response.data
     }

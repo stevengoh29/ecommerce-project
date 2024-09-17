@@ -57,7 +57,7 @@ export const usePagination = (params: PaginationType) => {
         }
 
         return [1, 'L', ...range(leftSiblingIndex, rightSiblingIndex), 'R', pageTotal]
-    }, [currentPage, pageTotal, siblings])
+    }, [pageTotal, siblings])
 
     const [activePage, setActivePage] = useState<ActivePageType>({
         pageValue: currentPage,

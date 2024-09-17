@@ -19,10 +19,10 @@ export const useGetProducts = (params: SearchProductParams) => {
 export const useGetProductByUuid = (uuid: string) => {
     const exec = async (uuid: string) => {
         const result = await productService.getById(uuid)
-        return result
+        return result.data
     }
 
-    const query = useQuery({
+    const query = useQuery<ProductData>({
         queryKey: ['get-product-by-id', uuid],
         queryFn: () => exec(uuid)
     })
